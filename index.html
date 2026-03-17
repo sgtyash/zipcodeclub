@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-stone-950 text-stone-200">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Zip Code Club | Ultra-Premium Pitch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap');
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            background-color: #0c0a09; /* stone-950 */
+        }
+
+        /* --- Advanced UI Utilities --- */
+        .text-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-panel {
+            background: rgba(28, 25, 23, 0.4); /* stone-900 with opacity */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- Scroll Progress Bar --- */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, #f59e0b, #ea580c);
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* --- Mouse Follower Glow --- */
+        #glow-blob {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: -1;
+            transition: top 0.2s ease-out, left 0.2s ease-out;
+        }
+
+        /* --- Scroll Reveal Animations --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* --- 3D Tilt Card --- */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+        }
+        .tilt-card-content {
+            transform: translateZ(30px); /* Pushes content forward for 3D effect */
+        }
+
+        /* --- Chart Container --- */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            height: 450px;
+        }
+        @media (max-width: 768px) {
+            .chart-container { height: 300px; }
+        }
+
+        /* --- Custom Tabs --- */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.5s ease;
+        }
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* --- Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0c0a09; }
+        ::-webkit-scrollbar-thumb { background: #292524; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+    </style>
+</head>
+<body class="selection:bg-amber-500/30 selection:text-amber-200">
+
+    <!-- Global Progress & Effects -->
+    <div id="scroll-progress"></div>
+    <div id="glow-blob"></div>
+
+    <!-- Navigation -->
+    <header class="glass-panel fixed w-full top-0 z-50 border-b-0 border-white/5 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-black text-white tracking-tighter flex items-center gap-3">
+                <div class="bg-gradient-to-br from-amber-500 to-orange-600 w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg shadow-[0_0_20px_rgba(245,158,11,0.4)]">📍</div>
+                ZipCodeClub
+            </div>
+            <nav class="hidden md:flex space-x-10">
+                <a href="#concept" class="text-sm font-bold text-stone-400 hover:text-white transition-colors tracking-wide">The Concept</a>
+                <a href="#audience" class="text-sm font-bold text-stone-400 hover:text-white transition-colors tracking-wide">Audience</a>
+                <a href="#activities" class="text-sm font-bold text-stone-400 hover:text-white transition-colors tracking-wide">Activities</a>
+                <a href="#expansion" class="text-sm font-bold text-stone-400 hover:text-white transition-colors tracking-wide">Master Plan</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Advanced Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Grid Background -->
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+        
+        <div class="max-w-6xl mx-auto px-6 text-center relative z-10 reveal">
+            <div class="inline-flex items-center gap-2 mb-8 px-5 py-2 rounded-full glass-panel border-amber-500/20 text-amber-400 font-bold text-xs uppercase tracking-[0.2em]">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                Redefining Adult Friendships
+            </div>
+            <h1 class="text-6xl md:text-8xl lg:text-[7rem] font-black text-white tracking-tighter leading-[1] mb-8">
+                Find your people,<br>wherever your<br><span class="text-gradient">zip code</span> may be.
+            </h1>
+            <p class="text-xl md:text-2xl text-stone-400 mb-14 max-w-3xl mx-auto font-light leading-relaxed">
+                A hyper-local, community-driven social club designed to help you build a new friend circle right where you live.
+            </p>
+            
+            <div class="max-w-lg mx-auto relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full blur-lg opacity-40 group-hover:opacity-75 transition duration-500"></div>
+                <div class="relative flex glass-panel rounded-full p-2">
+                    <input type="text" id="join-input" maxlength="7" placeholder="Enter 7-Digit Zip (e.g. 1234567)" class="flex-1 bg-transparent px-6 text-lg focus:outline-none text-white placeholder-stone-500 font-medium">
+                    <button id="hero-join-btn" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-full text-lg font-bold hover:scale-[1.02] transition-transform shadow-lg">
+                        Find My Club
+                    </button>
+                </div>
+            </div>
+            <div id="join-message" class="mt-6 text-sm font-bold text-emerald-400 hidden bg-emerald-900/30 inline-block px-5 py-2.5 rounded-full border border-emerald-500/30 backdrop-blur-md">
+                ✨ Success! You are on the priority waitlist.
+            </div>
+
+            <div id="connect-message" class="mt-6 text-sm font-bold text-amber-300 hidden bg-amber-900/20 inline-block px-5 py-2.5 rounded-full border border-amber-500/30 backdrop-blur-md">
+                Connect with us — we’ll reach out with your local club details.
+            </div>
+
+            <div id="lead-panel" class="hidden mt-10 max-w-3xl mx-auto text-left">
+                <div class="glass-panel rounded-[2rem] p-6 md:p-10 border border-white/10">
+                    <div class="flex items-start justify-between gap-6 mb-8">
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight">Connect with us</h2>
+                            <p class="text-stone-400 mt-2">Share your details and we’ll contact you about your city’s Zip Code Club.</p>
+                        </div>
+                        <button type="button" id="lead-close" class="text-stone-400 hover:text-white transition-colors text-sm font-bold">
+                            Close
+                        </button>
+                    </div>
+
+                    <form id="lead-form" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="md:col-span-2">
+                            <label for="lead-name" class="block text-xs font-bold tracking-widest uppercase text-stone-400 mb-2">Full Name</label>
+                            <input id="lead-name" name="name" type="text" required placeholder="Your name"
+                                class="w-full rounded-2xl bg-black/30 border border-white/10 px-5 py-4 text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40" />
+                        </div>
+
+                        <div>
+                            <label for="lead-email" class="block text-xs font-bold tracking-widest uppercase text-stone-400 mb-2">Email</label>
+                            <input id="lead-email" name="email" type="email" required placeholder="you@example.com"
+                                class="w-full rounded-2xl bg-black/30 border border-white/10 px-5 py-4 text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40" />
+                        </div>
+
+                        <div>
+                            <label for="lead-phone" class="block text-xs font-bold tracking-widest uppercase text-stone-400 mb-2">Phone</label>
+                            <input id="lead-phone" name="phone" type="tel" required placeholder="Phone number"
+                                class="w-full rounded-2xl bg-black/30 border border-white/10 px-5 py-4 text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40" />
+                        </div>
+
+                        <div>
+                            <label for="lead-zipcode" class="block text-xs font-bold tracking-widest uppercase text-stone-400 mb-2">Zip Code</label>
+                            <input id="lead-zipcode" name="zipcode" type="text" required placeholder="Zip code"
+                                class="w-full rounded-2xl bg-black/30 border border-white/10 px-5 py-4 text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40" />
+                        </div>
+
+                        <div>
+                            <label for="lead-state" class="block text-xs font-bold tracking-widest uppercase text-stone-400 mb-2">State</label>
+                            <select id="lead-state" name="state" required
+                                class="w-full rounded-2xl bg-black/30 border border-white/10 px-5 py-4 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40">
+                                <option value="" selected disabled>Select state</option>
+                                <option>Andhra Pradesh</option>
+                                <option>Arunachal Pradesh</option>
+                                <option>Assam</option>
+                                <option>Bihar</option>
+                                <option>Chhattisgarh</option>
+                                <option>Goa</option>
+                                <option>Gujarat</option>
+                                <option>Haryana</option>
+                                <option>Himachal Pradesh</option>
+                                <option>Jharkhand</option>
+                                <option>Karnataka</option>
+                                <option>Kerala</option>
+                                <option>Madhya Pradesh</option>
+                                <option>Maharashtra</option>
+                                <option>Manipur</option>
+                                <option>Meghalaya</option>
+                                <option>Mizoram</option>
+                                <option>Nagaland</option>
+                                <option>Odisha</option>
+                                <option>Punjab</option>
+                                <option>Rajasthan</option>
+                                <option>Sikkim</option>
+                                <option>Tamil Nadu</option>
+                                <option>Telangana</option>
+                                <option>Tripura</option>
+                                <option>Uttar Pradesh</option>
+                                <option>Uttarakhand</option>
+                                <option>West Bengal</option>
+                                <option>Andaman and Nicobar Islands</option>
+                                <option>Chandigarh</option>
+                                <option>Dadra and Nagar Haveli and Daman and Diu</option>
+                                <option>Delhi</option>
+                                <option>Jammu and Kashmir</option>
+                                <option>Ladakh</option>
+                                <option>Lakshadweep</option>
+                                <option>Puducherry</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="lead-city" class="block text-xs font-bold tracking-widest uppercase text-stone-400 mb-2">City</label>
+                            <select id="lead-city" name="city" required disabled
+                                class="w-full rounded-2xl bg-black/30 border border-white/10 px-5 py-4 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40 disabled:opacity-60">
+                                <option value="" selected disabled>Select city</option>
+                            </select>
+                        </div>
+
+                        <div class="md:col-span-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
+                            <p id="lead-status" class="text-sm font-semibold text-stone-400"></p>
+                            <button type="submit" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-2xl text-base font-black hover:scale-[1.02] transition-transform shadow-lg w-full md:w-auto">
+                                Submit Details
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Problem & Solution -->
+    <section id="concept" class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-20 items-center">
+                <div class="reveal">
+                    <h2 class="text-amber-500 font-black tracking-widest uppercase text-sm mb-4">01 // The Paradox</h2>
+                    <h3 class="text-5xl md:text-6xl font-black text-white mb-8 leading-tight">Career mobility is high. <br><span class="text-stone-600">Social mobility is broken.</span></h3>
+                    <div class="space-y-6 text-xl text-stone-400 font-light leading-relaxed">
+                        <p>In today's fast-paced world, people relocate for work, education, or a fresh start more than ever before.</p>
+                        <p>When you move to a new city—or even when you start a new phase of life in your hometown—you often leave your old friend circle behind. Making new friends as an adult is notoriously difficult. People lack a structured, non-awkward way to meet neighbors who share their goals, ambitions, and stage of life.</p>
+                    </div>
+                </div>
+                
+                <div class="relative reveal reveal-delay-2">
+                    <!-- Glowing backplate -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-orange-600/20 transform rotate-3 rounded-[3rem] blur-xl"></div>
+                    <div class="glass-panel p-12 md:p-16 rounded-[3rem] relative border border-white/10">
+                        <div class="text-6xl mb-8 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]">📍</div>
+                        <h4 class="text-3xl font-bold text-white mb-6">The Solution: The Zip Code Club</h4>
+                        <p class="text-stone-300 text-lg leading-relaxed mb-8">
+                            A zip code is the ultimate symbol of your immediate local area. It doesn't matter where you came from; what matters is the zip code you share <em>right now</em>. We provide proximity, accessibility, and local pride.
+                        </p>
+                        <ul class="space-y-4 font-medium text-stone-300">
+                            <li class="flex items-center gap-4"><span class="text-amber-500 text-xl">✓</span> Hyper-local focus</li>
+                            <li class="flex items-center gap-4"><span class="text-amber-500 text-xl">✓</span> Community-driven</li>
+                            <li class="flex items-center gap-4"><span class="text-amber-500 text-xl">✓</span> Structured, non-awkward meetups</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Target Audience (Sleek Interactive UI) -->
+    <section id="audience" class="py-32 bg-black/50 border-y border-white/5 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto mb-20 reveal">
+                <h2 class="text-amber-500 font-black tracking-widest uppercase text-sm mb-4">02 // Who it's for</h2>
+                <h3 class="text-5xl md:text-6xl font-black text-white mb-6">100% Open to All.</h3>
+                <p class="text-xl text-stone-400 font-light">Specifically designed to be a lifeline for adults in transition.</p>
+            </div>
+
+            <div class="glass-panel rounded-[3rem] p-6 md:p-10 border border-white/5 reveal">
+                <div class="flex flex-col lg:flex-row gap-10">
+                    <!-- Left Menu -->
+                    <div class="w-full lg:w-1/3 flex flex-col space-y-3">
+                        <button class="audience-tab w-full text-left p-6 rounded-2xl bg-white/5 border border-amber-500/50 transition-all group relative overflow-hidden" data-target="transplants">
+                            <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="relative z-10 flex items-center gap-5">
+                                <div class="text-4xl">🧳</div>
+                                <div>
+                                    <div class="font-bold text-white text-xl">The Transplants</div>
+                                    <div class="text-amber-500 text-sm font-semibold tracking-wide mt-1">New to the city</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="audience-tab w-full text-left p-6 rounded-2xl bg-transparent border border-transparent hover:bg-white/5 transition-all group relative overflow-hidden" data-target="pivoters">
+                            <div class="relative z-10 flex items-center gap-5">
+                                <div class="text-4xl opacity-50 group-hover:opacity-100 transition-opacity">🔄</div>
+                                <div>
+                                    <div class="font-bold text-stone-400 group-hover:text-white text-xl transition-colors">The Life-Pivoters</div>
+                                    <div class="text-stone-600 text-sm font-semibold tracking-wide mt-1">New lifestyle</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="audience-tab w-full text-left p-6 rounded-2xl bg-transparent border border-transparent hover:bg-white/5 transition-all group relative overflow-hidden" data-target="goalgetters">
+                            <div class="relative z-10 flex items-center gap-5">
+                                <div class="text-4xl opacity-50 group-hover:opacity-100 transition-opacity">🎯</div>
+                                <div>
+                                    <div class="font-bold text-stone-400 group-hover:text-white text-xl transition-colors">The Goal-Getters</div>
+                                    <div class="text-stone-600 text-sm font-semibold tracking-wide mt-1">Shared ambitions</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="audience-tab w-full text-left p-6 rounded-2xl bg-transparent border border-transparent hover:bg-white/5 transition-all group relative overflow-hidden" data-target="remote">
+                            <div class="relative z-10 flex items-center gap-5">
+                                <div class="text-4xl opacity-50 group-hover:opacity-100 transition-opacity">💻</div>
+                                <div>
+                                    <div class="font-bold text-stone-400 group-hover:text-white text-xl transition-colors">Remote Workers</div>
+                                    <div class="text-stone-600 text-sm font-semibold tracking-wide mt-1">Missing the cooler</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Right Content Area -->
+                    <div class="w-full lg:w-2/3 bg-[#110f0e] rounded-[2rem] p-10 md:p-16 border border-white/5 flex items-center min-h-[400px] shadow-inner relative overflow-hidden">
+                        <!-- Abstract shape -->
+                        <div class="absolute -right-20 -bottom-20 text-[20rem] opacity-5 select-none pointer-events-none" id="bg-emoji">🧳</div>
+                        
+                        <div id="transplants" class="tab-content active w-full relative z-10">
+                            <h3 class="text-4xl font-black text-white mb-6">The Transplants</h3>
+                            <div class="w-20 h-1 bg-gradient-to-r from-amber-500 to-orange-600 mb-8 rounded-full"></div>
+                            <p class="text-stone-300 text-2xl font-light leading-relaxed">
+                                People who just moved to a new city and don't know anyone.
+                            </p>
+                            <p class="text-stone-500 mt-6 text-lg">
+                                Stop relying on awkward dating apps to find friends. Plug directly into a curated community of locals the day you unpack your boxes.
+                            </p>
+                        </div>
+                        
+                        <div id="pivoters" class="tab-content w-full relative z-10">
+                            <h3 class="text-4xl font-black text-white mb-6">The Life-Pivoters</h3>
+                            <div class="w-20 h-1 bg-gradient-to-r from-amber-500 to-orange-600 mb-8 rounded-full"></div>
+                            <p class="text-stone-300 text-2xl font-light leading-relaxed">
+                                Locals who started a new job, ended a long-term relationship, or changed their lifestyle.
+                            </p>
+                            <p class="text-stone-500 mt-6 text-lg">
+                                You need a new circle of friends that aligns with your current path. Build a network that supports who you are today, not who you were yesterday.
+                            </p>
+                        </div>
+
+                        <div id="goalgetters" class="tab-content w-full relative z-10">
+                            <h3 class="text-4xl font-black text-white mb-6">The Goal-Getters</h3>
+                            <div class="w-20 h-1 bg-gradient-to-r from-amber-500 to-orange-600 mb-8 rounded-full"></div>
+                            <p class="text-stone-300 text-2xl font-light leading-relaxed">
+                                Individuals looking for accountability partners and friends with shared ambitions.
+                            </p>
+                            <p class="text-stone-500 mt-6 text-lg">
+                                Whether it's career growth, fitness milestones, or personal development, find the local network that will push you to the next level.
+                            </p>
+                        </div>
+
+                        <div id="remote" class="tab-content w-full relative z-10">
+                            <h3 class="text-4xl font-black text-white mb-6">The Remote Workers</h3>
+                            <div class="w-20 h-1 bg-gradient-to-r from-amber-500 to-orange-600 mb-8 rounded-full"></div>
+                            <p class="text-stone-300 text-2xl font-light leading-relaxed">
+                                Professionals who lack the traditional "office cooler" environment to socialize.
+                            </p>
+                            <p class="text-stone-500 mt-6 text-lg">
+                                Get out of the house, log off Slack, and interact with driven humans who live just down the street from your home office.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Activities (3D Tilt Cards) -->
+    <section id="activities" class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto mb-20 reveal">
+                <h2 class="text-amber-500 font-black tracking-widest uppercase text-sm mb-4">03 // Offerings</h2>
+                <h3 class="text-5xl md:text-6xl font-black text-white mb-6">Core Activities.</h3>
+                <p class="text-xl text-stone-400 font-light">To foster real connections, the club hosts regular, structured events.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Activity 1 -->
+                <div class="tilt-card reveal group cursor-pointer">
+                    <div class="glass-panel p-8 rounded-[2rem] border border-white/10 h-full transition-all duration-300 group-hover:border-amber-500/50 group-hover:bg-white/5 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/20 rounded-full blur-2xl group-hover:bg-amber-500/40 transition-all"></div>
+                        <div class="tilt-card-content">
+                            <div class="text-5xl mb-6">🥂</div>
+                            <h4 class="font-bold text-white text-2xl mb-4 tracking-tight">"Welcome to the Zip" Mixers</h4>
+                            <p class="text-stone-400 leading-relaxed font-light">Monthly low-pressure social gatherings for new members to introduce themselves.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Activity 2 -->
+                <div class="tilt-card reveal reveal-delay-1 group cursor-pointer">
+                    <div class="glass-panel p-8 rounded-[2rem] border border-white/10 h-full transition-all duration-300 group-hover:border-amber-500/50 group-hover:bg-white/5 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/20 rounded-full blur-2xl group-hover:bg-amber-500/40 transition-all"></div>
+                        <div class="tilt-card-content">
+                            <div class="text-5xl mb-6">⭕</div>
+                            <h4 class="font-bold text-white text-2xl mb-4 tracking-tight">Goal Circles</h4>
+                            <p class="text-stone-400 leading-relaxed font-light">Small groups that meet bi-weekly to share personal or professional goals and hold each other accountable.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Activity 3 -->
+                <div class="tilt-card reveal reveal-delay-2 group cursor-pointer">
+                    <div class="glass-panel p-8 rounded-[2rem] border border-white/10 h-full transition-all duration-300 group-hover:border-amber-500/50 group-hover:bg-white/5 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/20 rounded-full blur-2xl group-hover:bg-amber-500/40 transition-all"></div>
+                        <div class="tilt-card-content">
+                            <div class="text-5xl mb-6">🗺️</div>
+                            <h4 class="font-bold text-white text-2xl mb-4 tracking-tight">City Explorers</h4>
+                            <p class="text-stone-400 leading-relaxed font-light">Group outings to discover local restaurants, parks, museums, and hidden gems in the city.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Activity 4 -->
+                <div class="tilt-card reveal reveal-delay-3 group cursor-pointer">
+                    <div class="glass-panel p-8 rounded-[2rem] border border-white/10 h-full transition-all duration-300 group-hover:border-amber-500/50 group-hover:bg-white/5 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/20 rounded-full blur-2xl group-hover:bg-amber-500/40 transition-all"></div>
+                        <div class="tilt-card-content">
+                            <div class="text-5xl mb-6">🛠️</div>
+                            <h4 class="font-bold text-white text-2xl mb-4 tracking-tight">Skill & Hobby Swaps</h4>
+                            <p class="text-stone-400 leading-relaxed font-light">Member-led workshops where people teach each other things they are passionate about.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Master Plan Expansion (Advanced Data Viz) -->
+    <section id="expansion" class="py-32 bg-[#080706] border-t border-white/5 relative overflow-hidden">
+        <!-- Radial gradient background -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.05)_0%,transparent_70%)] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="mb-20 reveal">
+                <h2 class="text-amber-500 font-black tracking-widest uppercase text-sm mb-4">04 // The Roadmap</h2>
+                <h3 class="text-5xl md:text-6xl font-black text-white mb-6">The Expansion Master Plan</h3>
+                <p class="text-xl text-stone-400 font-light max-w-3xl">The vision for The Zip Code Club is to scale from a single neighborhood to a global network. Interact with the timeline to view our projected growth.</p>
+            </div>
+
+            <div class="glass-panel p-8 md:p-12 rounded-[3rem] border border-white/10 shadow-2xl reveal">
+                <div class="chart-container">
+                    <canvas id="expansionChart"></canvas>
+                </div>
+                
+                <!-- Detailed Timeline below chart -->
+                <div class="mt-16 grid md:grid-cols-4 gap-6 relative before:absolute before:inset-0 before:ml-5 md:before:ml-0 md:before:mt-5 before:-translate-x-px md:before:translate-x-0 md:before:h-0.5 md:before:w-full before:h-full before:w-0.5 before:bg-gradient-to-b md:before:bg-gradient-to-r before:from-amber-500 before:via-orange-600 before:to-stone-800">
+                    
+                    <div class="relative pl-10 md:pl-0 md:pt-10 group">
+                        <div class="absolute left-0 md:left-auto md:top-0 w-4 h-4 rounded-full bg-stone-900 border-2 border-amber-500 translate-y-1.5 md:translate-y-0 md:translate-x-1/2 group-hover:scale-150 transition-transform shadow-[0_0_10px_rgba(245,158,11,0.5)] z-10"></div>
+                        <h5 class="text-xl font-bold text-white mb-2">Phase 1: Pilot</h5>
+                        <p class="text-stone-400 text-sm font-light">Launch in one city (2-3 zips). Focus on "Founding Members" and establishing the playbook.</p>
+                    </div>
+                    
+                    <div class="relative pl-10 md:pl-0 md:pt-10 group">
+                        <div class="absolute left-0 md:left-auto md:top-0 w-4 h-4 rounded-full bg-stone-900 border-2 border-amber-500 translate-y-1.5 md:translate-y-0 md:translate-x-1/2 group-hover:scale-150 transition-transform shadow-[0_0_10px_rgba(245,158,11,0.5)] z-10"></div>
+                        <h5 class="text-xl font-bold text-white mb-2">Phase 2: State-Wide</h5>
+                        <p class="text-stone-400 text-sm font-light">Identify "Chapter Leaders" to open clubs in neighboring cities. Host annual retreats.</p>
+                    </div>
+                    
+                    <div class="relative pl-10 md:pl-0 md:pt-10 group">
+                        <div class="absolute left-0 md:left-auto md:top-0 w-4 h-4 rounded-full bg-stone-900 border-2 border-orange-500 translate-y-1.5 md:translate-y-0 md:translate-x-1/2 group-hover:scale-150 transition-transform shadow-[0_0_10px_rgba(234,88,12,0.5)] z-10"></div>
+                        <h5 class="text-xl font-bold text-white mb-2">Phase 3: National</h5>
+                        <p class="text-stone-400 text-sm font-light">Expand to relocation hubs (NY, Austin). Launch the "Zip Code Passport".</p>
+                    </div>
+                    
+                    <div class="relative pl-10 md:pl-0 md:pt-10 group">
+                        <div class="absolute left-0 md:left-auto md:top-0 w-4 h-4 rounded-full bg-stone-900 border-2 border-stone-600 translate-y-1.5 md:translate-y-0 md:translate-x-1/2 group-hover:scale-150 transition-transform z-10"></div>
+                        <h5 class="text-xl font-bold text-white mb-2">Phase 4: Global</h5>
+                        <p class="text-stone-400 text-sm font-light">International expansion. Move from Tokyo to Toronto and plug right into a new club.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Values -->
+    <section class="py-32 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl md:text-6xl font-black text-center text-white mb-20 reveal">Our Core Values</h2>
+            
+            <div class="grid md:grid-cols-3 gap-12 text-center">
+                <div class="reveal reveal-delay-1 group">
+                    <div class="text-6xl mb-6 group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-300">🌍</div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Radical Inclusivity</h3>
+                    <p class="text-stone-400 font-light text-lg">Open to absolutely all backgrounds, professions, and ages.</p>
+                </div>
+                <div class="reveal reveal-delay-2 group">
+                    <div class="text-6xl mb-6 group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-300">📍</div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Proximity is Power</h3>
+                    <p class="text-stone-400 font-light text-lg">Meaningful relationships are built on shared experiences in shared spaces.</p>
+                </div>
+                <div class="reveal reveal-delay-3 group">
+                    <div class="text-6xl mb-6 group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-300">🚀</div>
+                    <h3 class="text-2xl font-bold text-white mb-4">Growth Together</h3>
+                    <p class="text-stone-400 font-light text-lg">We aren't just here to hang out; we are here to help each other achieve our goals.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Footer CTA & Contact -->
+    <footer class="relative pt-32 pb-12 border-t border-white/5 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-amber-900/20 pointer-events-none"></div>
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10 reveal">
+            <h2 class="text-6xl md:text-8xl font-black text-white mb-8 tracking-tighter">Become a <br><span class="text-gradient">Founder.</span></h2>
+            <p class="text-xl text-stone-400 font-light mb-12">Help us build the playbook in your city. Early access guarantees your spot in the inaugural Goal Circles.</p>
+            <button onclick="document.getElementById('join-input').focus(); window.scrollTo({top:0, behavior:'smooth'})" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-10 py-5 rounded-full text-xl font-black hover:scale-105 transition-transform shadow-[0_10px_30px_rgba(245,158,11,0.4)]">
+                Apply for Early Access
+            </button>
+            
+            <!-- Contact Information Grid -->
+            <div class="mt-24 pt-12 border-t border-white/10 grid md:grid-cols-3 gap-8 text-stone-400 text-sm font-light">
+                <div class="text-center md:text-left">
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider text-xs">Head Office</h4>
+                    <p class="leading-relaxed text-base">Ziro, Lower Subansiri<br>Arunachal Pradesh 791120</p>
+                </div>
+                <div class="text-center md:text-left">
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider text-xs">Contact Us</h4>
+                    <div class="space-y-4">
+                        <a href="tel:7002694743" target="_top" class="flex items-center justify-center md:justify-start gap-4 hover:text-amber-500 transition-colors group">
+                            <span class="bg-white/5 border border-white/10 p-2.5 rounded-xl group-hover:bg-amber-500/20 group-hover:border-amber-500/50 transition-all shadow-sm">📞</span> 
+                            <span class="text-base font-medium">Call: 7002694743</span>
+                        </a>
+                        <a href="mailto:admin@zipcodeclub.org" target="_top" class="flex items-center justify-center md:justify-start gap-4 hover:text-amber-500 transition-colors group">
+                            <span class="bg-white/5 border border-white/10 p-2.5 rounded-xl group-hover:bg-amber-500/20 group-hover:border-amber-500/50 transition-all shadow-sm">✉️</span> 
+                            <span class="text-base font-medium">admin@zipcodeclub.org</span>
+                        </a>
+                        <a href="https://www.zipcodeclub.org" target="_blank" class="flex items-center justify-center md:justify-start gap-4 hover:text-amber-500 transition-colors group">
+                            <span class="bg-white/5 border border-white/10 p-2.5 rounded-xl group-hover:bg-amber-500/20 group-hover:border-amber-500/50 transition-all shadow-sm">🌐</span> 
+                            <span class="text-base font-medium">zipcodeclub.org</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="text-center md:text-left">
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider text-xs">Follow Us</h4>
+                    <a href="https://instagram.com/zipcodeclub" target="_blank" class="inline-flex items-center justify-center md:justify-start gap-4 hover:text-amber-500 transition-colors group">
+                        <span class="bg-white/5 border border-white/10 p-2.5 rounded-xl group-hover:bg-amber-500/20 group-hover:border-amber-500/50 transition-all shadow-sm">📸</span> 
+                        <span class="text-base font-medium">@zipcodeclub</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Copyright / Legal -->
+            <div class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-stone-500 text-sm font-medium">
+                <div>© 2026 <a href="https://www.zipcodeclub.org" target="_blank" class="text-amber-500 hover:text-amber-400 transition-colors">The Zip Code Club</a>. Find your people.</div>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-amber-500 transition-colors">Manifesto</a>
+                    <a href="#" class="hover:text-amber-500 transition-colors">Privacy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Scroll Progress Bar
+            const progressBar = document.getElementById('scroll-progress');
+            window.addEventListener('scroll', () => {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                progressBar.style.width = scrolled + "%";
+            });
+
+            // 2. Advanced Mouse Follower Glow (Desktop only for performance)
+            if (window.innerWidth > 768) {
+                const blob = document.getElementById('glow-blob');
+                window.addEventListener('mousemove', (e) => {
+                    const x = e.clientX;
+                    const y = e.clientY;
+                    blob.style.left = `${x}px`;
+                    blob.style.top = `${y}px`;
+                });
+            }
+
+            // 3. Staggered Scroll Reveal
+            const reveals = document.querySelectorAll('.reveal');
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+            const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); // Run once
+                    }
+                });
+            }, revealOptions);
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+
+            // 4. Glass Navbar Effect
+            const header = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-stone-950/80', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+                    header.classList.remove('border-transparent');
+                } else {
+                    header.classList.remove('bg-stone-950/80', 'backdrop-blur-xl', 'border-b', 'border-white/10');
+                    header.classList.add('border-transparent');
+                }
+            });
+
+            // 4.5 Navigation Smooth Scroll Fix (Handles fixed header offset)
+            document.querySelectorAll('nav a').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        const headerHeight = document.getElementById('navbar').offsetHeight;
+                        const targetPosition = targetSection.getBoundingClientRect().top + window.scrollY - headerHeight;
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // 4.6 Hero Button Logic
+            const heroBtn = document.getElementById('hero-join-btn');
+            const heroInput = document.getElementById('join-input');
+            const msg = document.getElementById('join-message');
+            const connectMsg = document.getElementById('connect-message');
+            const leadPanel = document.getElementById('lead-panel');
+            const leadClose = document.getElementById('lead-close');
+            const leadForm = document.getElementById('lead-form');
+            const leadStatus = document.getElementById('lead-status');
+            const leadZip = document.getElementById('lead-zipcode');
+            const leadName = document.getElementById('lead-name');
+            const leadEmail = document.getElementById('lead-email');
+            const leadPhone = document.getElementById('lead-phone');
+            const leadState = document.getElementById('lead-state');
+            const leadCity = document.getElementById('lead-city');
+            
+            const CITY_BY_STATE = {
+                "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Tirupati", "Kurnool", "Other"],
+                "Arunachal Pradesh": ["Itanagar", "Ziro", "Naharlagun", "Pasighat", "Tawang", "Other"],
+                "Assam": ["Guwahati", "Silchar", "Dibrugarh", "Jorhat", "Tezpur", "Other"],
+                "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Darbhanga", "Other"],
+                "Chhattisgarh": ["Raipur", "Bhilai", "Bilaspur", "Durg", "Korba", "Other"],
+                "Goa": ["Panaji", "Margao", "Vasco da Gama", "Mapusa", "Ponda", "Other"],
+                "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Gandhinagar", "Other"],
+                "Haryana": ["Gurugram", "Faridabad", "Panipat", "Ambala", "Hisar", "Other"],
+                "Himachal Pradesh": ["Shimla", "Dharamshala", "Solan", "Mandi", "Kullu", "Other"],
+                "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar", "Other"],
+                "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi", "Belagavi", "Other"],
+                "Kerala": ["Kochi", "Thiruvananthapuram", "Kozhikode", "Thrissur", "Kannur", "Other"],
+                "Madhya Pradesh": ["Bhopal", "Indore", "Jabalpur", "Gwalior", "Ujjain", "Other"],
+                "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik", "Aurangabad", "Other"],
+                "Manipur": ["Imphal", "Thoubal", "Bishnupur", "Churachandpur", "Ukhrul", "Other"],
+                "Meghalaya": ["Shillong", "Tura", "Jowai", "Nongpoh", "Williamnagar", "Other"],
+                "Mizoram": ["Aizawl", "Lunglei", "Saiha", "Champhai", "Kolasib", "Other"],
+                "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Wokha", "Tuensang", "Other"],
+                "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Puri", "Sambalpur", "Other"],
+                "Punjab": ["Chandigarh", "Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Other"],
+                "Rajasthan": ["Jaipur", "Jodhpur", "Udaipur", "Kota", "Ajmer", "Other"],
+                "Sikkim": ["Gangtok", "Namchi", "Gyalshing", "Mangan", "Rangpo", "Other"],
+                "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli", "Salem", "Other"],
+                "Telangana": ["Hyderabad", "Warangal", "Nizamabad", "Karimnagar", "Khammam", "Other"],
+                "Tripura": ["Agartala", "Udaipur", "Dharmanagar", "Kailasahar", "Belonia", "Other"],
+                "Uttar Pradesh": ["Lucknow", "Noida", "Kanpur", "Varanasi", "Agra", "Other"],
+                "Uttarakhand": ["Dehradun", "Haridwar", "Rishikesh", "Haldwani", "Nainital", "Other"],
+                "West Bengal": ["Kolkata", "Siliguri", "Durgapur", "Asansol", "Howrah", "Other"],
+                "Andaman and Nicobar Islands": ["Port Blair", "Other"],
+                "Chandigarh": ["Chandigarh", "Other"],
+                "Dadra and Nagar Haveli and Daman and Diu": ["Daman", "Silvassa", "Other"],
+                "Delhi": ["New Delhi", "Other"],
+                "Jammu and Kashmir": ["Srinagar", "Jammu", "Anantnag", "Baramulla", "Other"],
+                "Ladakh": ["Leh", "Kargil", "Other"],
+                "Lakshadweep": ["Kavaratti", "Other"],
+                "Puducherry": ["Puducherry", "Karaikal", "Other"]
+            };
+
+            function openLeadPanel(zipcodeValue) {
+                if (connectMsg) connectMsg.classList.remove('hidden');
+                if (msg) msg.classList.add('hidden');
+
+                if (leadZip) leadZip.value = zipcodeValue;
+                if (leadStatus) leadStatus.textContent = '';
+
+                if (leadPanel) {
+                    leadPanel.classList.remove('hidden');
+                    leadPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                if (leadName) leadName.focus();
+            }
+
+            function closeLeadPanel() {
+                if (leadPanel) leadPanel.classList.add('hidden');
+                if (connectMsg) connectMsg.classList.add('hidden');
+            }
+
+            function setCityOptions(stateValue) {
+                if (!leadCity) return;
+                const cities = CITY_BY_STATE[stateValue] || ["Other"];
+                leadCity.innerHTML = '<option value="" selected disabled>Select city</option>' +
+                    cities.map(c => `<option value="${c.replace(/"/g, '&quot;')}">${c}</option>`).join('');
+                leadCity.disabled = false;
+            }
+
+            if (heroBtn && heroInput) {
+                heroBtn.addEventListener('click', () => {
+                    const zip = heroInput.value.trim();
+                    if (zip !== '') {
+                        openLeadPanel(zip);
+                    } else {
+                        heroInput.focus();
+                    }
+                });
+            }
+
+            if (leadClose) {
+                leadClose.addEventListener('click', closeLeadPanel);
+            }
+
+            if (leadState) {
+                leadState.addEventListener('change', (e) => {
+                    setCityOptions(e.target.value);
+                });
+            }
+
+            if (leadForm) {
+                leadForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (!leadName || !leadEmail || !leadPhone || !leadZip || !leadState || !leadCity) return;
+
+                    const GOOGLE_SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzJH99Sujxxnx7yx2_jrYNEoWkAKGV0RVqvZIGZ16LDR_7qCE7oZAPb_-4Csh6JFRTy1g/exec";
+
+                    const payload = {
+                        name: leadName.value.trim(),
+                        email: leadEmail.value.trim(),
+                        phone: leadPhone.value.trim(),
+                        zipcode: leadZip.value.trim(),
+                        state: leadState.value,
+                        city: leadCity.value,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    if (!payload.name || !payload.email || !payload.phone || !payload.zipcode || !payload.state || !payload.city) {
+                        if (leadStatus) leadStatus.textContent = 'Please fill all fields.';
+                        return;
+                    }
+
+                    const shouldSendToSheets =
+                        typeof GOOGLE_SHEETS_WEB_APP_URL === 'string' &&
+                        GOOGLE_SHEETS_WEB_APP_URL.startsWith('https://script.google.com/') &&
+                        !GOOGLE_SHEETS_WEB_APP_URL.includes('PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE');
+
+                    if (leadStatus) leadStatus.textContent = shouldSendToSheets ? 'Submitting…' : 'Saving…';
+
+                    (async () => {
+                        try {
+                            if (shouldSendToSheets) {
+                                // Using no-cors avoids browser CORS blocks for Apps Script Web Apps.
+                                // We treat a resolved request as success.
+                                await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+                                    method: 'POST',
+                                    mode: 'no-cors',
+                                    body: JSON.stringify(payload)
+                                });
+                                console.log('ZipCodeClub lead sent to Google Sheet:', payload);
+                                if (leadStatus) leadStatus.textContent = '✅ Submitted! We’ll contact you soon.';
+                            } else {
+                                const key = 'zipcodeclub_leads';
+                                const existing = JSON.parse(localStorage.getItem(key) || '[]');
+                                existing.push(payload);
+                                localStorage.setItem(key, JSON.stringify(existing));
+                                console.log('ZipCodeClub lead saved locally (set Google URL to send to sheet):', payload);
+                                if (leadStatus) leadStatus.textContent = '✅ Saved on this device. Add your Google Sheets URL to send online.';
+                            }
+
+                            leadForm.reset();
+                            if (leadZip) leadZip.value = payload.zipcode;
+                            if (leadCity) {
+                                leadCity.innerHTML = '<option value="" selected disabled>Select city</option>';
+                                leadCity.disabled = true;
+                            }
+                        } catch (err) {
+                            console.error('Lead submit failed:', err);
+                            if (leadStatus) leadStatus.textContent = 'Something went wrong. Please try again.';
+                        }
+                    })();
+                });
+            }
+
+            // 5. Interactive Audience Tabs (Emoji background changes based on tab)
+            const tabs = document.querySelectorAll('.audience-tab');
+            const contents = document.querySelectorAll('.tab-content');
+            const bgEmoji = document.getElementById('bg-emoji');
+            const emojis = {
+                'transplants': '🧳',
+                'pivoters': '🔄',
+                'goalgetters': '🎯',
+                'remote': '💻'
+            };
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Reset Tabs UI
+                    tabs.forEach(t => {
+                        t.classList.remove('bg-white/5', 'border-amber-500/50');
+                        t.classList.add('bg-transparent', 'border-transparent');
+                        t.querySelector('.text-xl').classList.replace('text-white', 'text-stone-400');
+                        t.querySelector('.text-sm').classList.replace('text-amber-500', 'text-stone-600');
+                        t.querySelector('.text-4xl').classList.replace('opacity-100', 'opacity-50');
+                        t.querySelector('.absolute.inset-0').classList.replace('opacity-100', 'opacity-0');
+                    });
+                    
+                    // Activate Tab UI
+                    tab.classList.remove('bg-transparent', 'border-transparent');
+                    tab.classList.add('bg-white/5', 'border-amber-500/50');
+                    tab.querySelector('.text-xl').classList.replace('text-stone-400', 'text-white');
+                    tab.querySelector('.text-sm').classList.replace('text-stone-600', 'text-amber-500');
+                    tab.querySelector('.text-4xl').classList.replace('opacity-50', 'opacity-100');
+                    tab.querySelector('.absolute.inset-0').classList.replace('opacity-0', 'opacity-100');
+
+                    // Switch Content & Background Emoji
+                    const targetId = tab.getAttribute('data-target');
+                    bgEmoji.textContent = emojis[targetId];
+                    bgEmoji.style.transform = 'scale(0.8)';
+                    bgEmoji.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        bgEmoji.style.transform = 'scale(1)';
+                        bgEmoji.style.opacity = '0.05';
+                    }, 50);
+
+                    contents.forEach(content => {
+                        if (content.id === targetId) {
+                            content.classList.add('active');
+                        } else {
+                            content.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            // 6. 3D Tilt Effect for Activity Cards (Vanilla JS)
+            const tiltCards = document.querySelectorAll('.tilt-card');
+            tiltCards.forEach(card => {
+                const inner = card.querySelector('.glass-panel');
+                
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = ((y - centerY) / centerY) * -10; // Max 10 deg rotation
+                    const rotateY = ((x - centerX) / centerX) * 10;
+                    
+                    inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    inner.style.transform = `rotateX(0deg) rotateY(0deg)`;
+                    inner.style.transition = 'transform 0.5s ease';
+                });
+                
+                card.addEventListener('mouseenter', () => {
+                    inner.style.transition = 'none'; // Remove transition for smooth tracking
+                });
+            });
+
+            // 7. Chart.js Implementation (Neon Cyber Theme)
+            const ctx = document.getElementById('expansionChart').getContext('2d');
+            
+            // Premium Chart Gradients
+            const lineGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            lineGradient.addColorStop(0, 'rgba(245, 158, 11, 1)'); // Amber 500
+            lineGradient.addColorStop(1, 'rgba(234, 88, 12, 1)');  // Orange 600
+
+            const fillGradient = ctx.createLinearGradient(0, 0, 0, 400);
+            fillGradient.addColorStop(0, 'rgba(245, 158, 11, 0.4)');
+            fillGradient.addColorStop(1, 'rgba(245, 158, 11, 0.0)');
+
+            const chartData = {
+                labels: ['Phase 1 (Pilot)', 'Phase 2 (State)', 'Phase 3 (National)', 'Phase 4 (Global)'],
+                datasets: [{
+                    label: 'Projected Chapters',
+                    data: [3, 15, 75, 250], 
+                    borderColor: lineGradient,
+                    backgroundColor: fillGradient,
+                    borderWidth: 4,
+                    pointBackgroundColor: '#0c0a09',
+                    pointBorderColor: '#f59e0b',
+                    pointBorderWidth: 3,
+                    pointRadius: 6,
+                    pointHoverRadius: 10,
+                    pointHoverBackgroundColor: '#f59e0b',
+                    fill: true,
+                    tension: 0.4 // Smooth curve
+                }]
+            };
+
+            const chartConfig = {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(28, 25, 23, 0.95)',
+                            titleColor: '#f59e0b',
+                            titleFont: { size: 14, family: "'Outfit', sans-serif", weight: 'bold' },
+                            bodyColor: '#fff',
+                            bodyFont: { size: 16, family: "'Outfit', sans-serif" },
+                            padding: 16,
+                            borderColor: 'rgba(245, 158, 11, 0.3)',
+                            borderWidth: 1,
+                            cornerRadius: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' Active Chapters';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: 'rgba(168, 162, 158, 0.6)',
+                                font: { family: "'Outfit', sans-serif", size: 12 },
+                                padding: 10
+                            }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: {
+                                color: 'rgba(214, 211, 209, 1)',
+                                font: { family: "'Outfit', sans-serif", weight: '500', size: 13 },
+                                padding: 10
+                            }
+                        }
+                    }
+                }
+            };
+
+            let chartRendered = false;
+            const chartObserver = new IntersectionObserver((entries) => {
+                if(entries[0].isIntersecting && !chartRendered) {
+                    new Chart(ctx, chartConfig);
+                    chartRendered = true;
+                }
+            }, { threshold: 0.2 });
+            
+            chartObserver.observe(document.getElementById('expansionChart'));
+
+        });
+    </script>
+</body>
+</html>
+
