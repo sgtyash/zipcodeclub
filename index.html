@@ -202,7 +202,8 @@
 
                         <div>
                             <label for="lead-zipcode" class="block text-xs font-bold tracking-widest uppercase text-stone-400 mb-2">Zip Code</label>
-                            <input id="lead-zipcode" name="zipcode" type="text" required placeholder="Zip code"
+                            <input id="lead-zipcode" name="zipcode" type="text" required placeholder="6-digit PIN code"
+                                maxlength="6" inputmode="numeric" pattern="\\d{6}"
                                 class="w-full rounded-2xl bg-black/30 border border-white/10 px-5 py-4 text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40" />
                         </div>
 
@@ -256,6 +257,16 @@
                                 class="w-full rounded-2xl bg-black/30 border border-white/10 px-5 py-4 text-white focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40 disabled:opacity-60">
                                 <option value="" selected disabled>Select city</option>
                             </select>
+                            <input id="lead-city-manual" name="cityManual" type="text" placeholder="Enter city manually"
+                                disabled
+                                class="mt-3 w-full rounded-2xl bg-black/30 border border-white/10 px-5 py-4 text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40 disabled:opacity-60" />
+                        </div>
+
+                        <div>
+                            <label for="lead-district" class="block text-xs font-bold tracking-widest uppercase text-stone-400 mb-2">District</label>
+                            <input id="lead-district" name="district" type="text" required placeholder="District (auto from PIN)"
+                                disabled
+                                class="w-full rounded-2xl bg-black/30 border border-white/10 px-5 py-4 text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500/60 focus:border-amber-500/40 disabled:opacity-60" />
                         </div>
 
                         <div class="md:col-span-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-4">
@@ -568,6 +579,10 @@
                             <span class="bg-white/5 border border-white/10 p-2.5 rounded-xl group-hover:bg-amber-500/20 group-hover:border-amber-500/50 transition-all shadow-sm">✉️</span> 
                             <span class="text-base font-medium">admin@zipcodeclub.org</span>
                         </a>
+                        <a href="https://wa.me/message/SAOA5LK3XC66L1" target="_blank" class="flex items-center justify-center md:justify-start gap-4 hover:text-amber-500 transition-colors group">
+                            <span class="bg-white/5 border border-white/10 p-2.5 rounded-xl group-hover:bg-amber-500/20 group-hover:border-amber-500/50 transition-all shadow-sm">💬</span> 
+                            <span class="text-base font-medium">WhatsApp</span>
+                        </a>
                         <a href="https://www.zipcodeclub.org" target="_blank" class="flex items-center justify-center md:justify-start gap-4 hover:text-amber-500 transition-colors group">
                             <span class="bg-white/5 border border-white/10 p-2.5 rounded-xl group-hover:bg-amber-500/20 group-hover:border-amber-500/50 transition-all shadow-sm">🌐</span> 
                             <span class="text-base font-medium">zipcodeclub.org</span>
@@ -593,6 +608,26 @@
             </div>
         </div>
     </footer>
+
+    <!-- Fixed WhatsApp Button -->
+    <a
+        id="whatsapp-fab"
+        href="https://wa.me/917002694743"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp"
+        style="position:fixed; right:20px; bottom:20px;"
+        class="z-[100] w-14 h-14 rounded-full flex items-center justify-center relative
+               bg-white/5 border border-white/10 backdrop-blur-xl shadow-lg
+               hover:bg-amber-500/20 hover:border-amber-500/50 hover:scale-105 transition-all"
+        title="WhatsApp"
+    >
+        <span class="absolute -top-10 right-0 transform translate-x-1/4 whitespace-nowrap text-xs font-bold
+                     bg-black/40 border border-white/10 text-stone-200 px-3 py-1 rounded-full backdrop-blur-md">
+            Text us
+        </span>
+        <span class="text-2xl" aria-hidden="true">💬</span>
+    </a>
 
     <!-- JS Logic -->
     <script>
@@ -680,6 +715,40 @@
             const leadPhone = document.getElementById('lead-phone');
             const leadState = document.getElementById('lead-state');
             const leadCity = document.getElementById('lead-city');
+            const leadCityManual = document.getElementById('lead-city-manual');
+            const CITY_MANUAL_VALUE = '__manual__';
+            const leadDistrict = document.getElementById('lead-district');
+
+            // WhatsApp click -> open chat with a preset message.
+            // If user already filled the form, include their PIN/state/city/district.
+            const waFab = document.getElementById('whatsapp-fab');
+            const WA_PHONE = '917002694743'; // WhatsApp phone in international format (no '+')
+            if (waFab) {
+                waFab.addEventListener('click', () => {
+                    let pin = leadZip ? leadZip.value.trim() : '';
+                    let state = leadState ? leadState.value : '';
+                    let district = leadDistrict ? leadDistrict.value.trim() : '';
+
+                    let city = '';
+                    if (leadCity && leadCity.value === CITY_MANUAL_VALUE && leadCityManual) {
+                        city = leadCityManual.value.trim();
+                    } else if (leadCity) {
+                        city = leadCity.value;
+                    }
+
+                    const parts = [];
+                    if (pin) parts.push(`PIN: ${pin}`);
+                    if (state) parts.push(`State: ${state}`);
+                    if (city) parts.push(`City: ${city}`);
+                    if (district) parts.push(`District: ${district}`);
+
+                    const message = parts.length
+                        ? `Hi ZipCodeClub! I'm interested in joining.\n${parts.join('\n')}`
+                        : `Hi ZipCodeClub! I'm interested in joining my local Zip Code Club.`;
+
+                    waFab.href = `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(message)}`;
+                });
+            }
             
             const CITY_BY_STATE = {
                 "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Tirupati", "Kurnool", "Other"],
@@ -733,6 +802,9 @@
                 }
 
                 if (leadName) leadName.focus();
+
+                // Auto-fill State + City when ZIP looks like a valid PIN
+                lookupPinAndFill(zipcodeValue);
             }
 
             function closeLeadPanel() {
@@ -743,9 +815,103 @@
             function setCityOptions(stateValue) {
                 if (!leadCity) return;
                 const cities = CITY_BY_STATE[stateValue] || ["Other"];
-                leadCity.innerHTML = '<option value="" selected disabled>Select city</option>' +
-                    cities.map(c => `<option value="${c.replace(/"/g, '&quot;')}">${c}</option>`).join('');
+                const citiesLimited = cities.slice(0, 20);
+                const manualOpt = `<option value="${CITY_MANUAL_VALUE}">Other (enter manually)</option>`;
+
+                leadCity.innerHTML =
+                    '<option value="" selected disabled>Select city</option>' +
+                    citiesLimited.map(c => `<option value="${c.replace(/"/g, '&quot;')}">${c}</option>`).join('') +
+                    manualOpt;
+
                 leadCity.disabled = false;
+            }
+
+            function resetCityOptions() {
+                if (!leadCity) return;
+                leadCity.innerHTML = '<option value="" selected disabled>Select city</option>';
+                leadCity.disabled = true;
+
+                if (leadCityManual) {
+                    leadCityManual.value = '';
+                    leadCityManual.disabled = true;
+                }
+
+                if (leadDistrict) {
+                    leadDistrict.value = '';
+                    leadDistrict.disabled = true;
+                }
+            }
+
+            function escapeHtml(str) {
+                return String(str)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            // Fetch location details from a 6-digit Indian PIN code and fill State + City.
+            async function lookupPinAndFill(pinValue) {
+                if (!leadZip || !leadState || !leadCity) return;
+
+                const pin = String(pinValue || '').replace(/\D/g, '').slice(0, 6);
+                if (pin.length !== 6) return;
+
+                resetCityOptions();
+                if (leadStatus) leadStatus.textContent = 'Looking up location…';
+
+                try {
+                    // Public API: PIN -> list of post offices with State + Name.
+                    const resp = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+                    const json = await resp.json();
+                    const first = Array.isArray(json) ? json[0] : null;
+
+                    if (!first || first.Status !== 'Success' || !Array.isArray(first.PostOffice) || first.PostOffice.length === 0) {
+                        if (leadStatus) leadStatus.textContent = 'Could not find this PIN. Please select manually.';
+                        return;
+                    }
+
+                    const postOffices = first.PostOffice;
+                    const stateName = postOffices[0].State || '';
+                    const districtName = postOffices[0].District || '';
+
+                    // "City" here should not be the same as administrative District.
+                    // City should be "city names of state", so we will NOT take city from the PIN response.
+                    // Instead we fill the City dropdown using your state->cities mapping (setCityOptions).
+
+                    // Fill state (if API state isn't in your dropdown list, add it)
+                    if (stateName) {
+                        const stateExists = Array.from(leadState.options).some(o => o.value === stateName || o.text === stateName);
+                        if (!stateExists) {
+                            const opt = document.createElement('option');
+                            opt.value = stateName;
+                            opt.textContent = stateName;
+                            leadState.appendChild(opt);
+                        }
+                        leadState.value = stateName;
+                    }
+
+                    // Fill district to match exact zipcode
+                    if (leadDistrict && districtName) {
+                        leadDistrict.value = districtName;
+                        leadDistrict.disabled = false;
+                    }
+
+                    // Fill city dropdown from state mapping (accurate city names you maintain)
+                    if (stateName) {
+                        setCityOptions(stateName);
+                    }
+                    if (leadCityManual) {
+                        leadCityManual.value = '';
+                        leadCityManual.disabled = true;
+                    }
+
+                    if (leadStatus) leadStatus.textContent = 'Location filled from PIN.';
+                } catch (err) {
+                    console.error('PIN lookup failed:', err);
+                    if (leadStatus) leadStatus.textContent = 'Location lookup failed. Please select manually.';
+                }
             }
 
             if (heroBtn && heroInput) {
@@ -769,12 +935,48 @@
                 });
             }
 
+            if (leadCity) {
+                leadCity.addEventListener('change', () => {
+                    const isManual = leadCity.value === CITY_MANUAL_VALUE;
+                    if (leadCityManual) {
+                        leadCityManual.disabled = !isManual;
+                        if (!isManual) leadCityManual.value = '';
+                        if (isManual) leadCityManual.focus();
+                    }
+                });
+            }
+
+            // Auto-fill State + City when user types a 6-digit PIN
+            if (leadZip) {
+                let pinLookupTimer = null;
+                leadZip.addEventListener('input', () => {
+                    if (pinLookupTimer) clearTimeout(pinLookupTimer);
+
+                    const pin = String(leadZip.value || '').replace(/\D/g, '').slice(0, 6);
+                    leadZip.value = pin;
+
+                    if (pin.length < 6) {
+                        resetCityOptions();
+                        if (leadStatus) leadStatus.textContent = '';
+                        return;
+                    }
+
+                    pinLookupTimer = setTimeout(() => {
+                        lookupPinAndFill(pin);
+                    }, 600);
+                });
+            }
+
             if (leadForm) {
                 leadForm.addEventListener('submit', (e) => {
                     e.preventDefault();
-                    if (!leadName || !leadEmail || !leadPhone || !leadZip || !leadState || !leadCity) return;
+                    if (!leadName || !leadEmail || !leadPhone || !leadZip || !leadState || !leadCity || !leadDistrict) return;
 
                     const GOOGLE_SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzJH99Sujxxnx7yx2_jrYNEoWkAKGV0RVqvZIGZ16LDR_7qCE7oZAPb_-4Csh6JFRTy1g/exec";
+
+                    const isManualCity = leadCity.value === CITY_MANUAL_VALUE;
+                    const manualCityValue = leadCityManual ? leadCityManual.value.trim() : '';
+                    const cityValue = isManualCity ? manualCityValue : leadCity.value;
 
                     const payload = {
                         name: leadName.value.trim(),
@@ -782,11 +984,17 @@
                         phone: leadPhone.value.trim(),
                         zipcode: leadZip.value.trim(),
                         state: leadState.value,
-                        city: leadCity.value,
+                        city: cityValue,
+                        district: leadDistrict.value.trim(),
                         createdAt: new Date().toISOString()
                     };
 
-                    if (!payload.name || !payload.email || !payload.phone || !payload.zipcode || !payload.state || !payload.city) {
+                    if (isManualCity && !manualCityValue) {
+                        if (leadStatus) leadStatus.textContent = 'Please enter city manually.';
+                        return;
+                    }
+
+                    if (!payload.name || !payload.email || !payload.phone || !payload.zipcode || !payload.state || !payload.city || !payload.district) {
                         if (leadStatus) leadStatus.textContent = 'Please fill all fields.';
                         return;
                     }
@@ -824,6 +1032,14 @@
                             if (leadCity) {
                                 leadCity.innerHTML = '<option value="" selected disabled>Select city</option>';
                                 leadCity.disabled = true;
+                            }
+                            if (leadCityManual) {
+                                leadCityManual.value = '';
+                                leadCityManual.disabled = true;
+                            }
+                            if (leadDistrict) {
+                                leadDistrict.value = '';
+                                leadDistrict.disabled = true;
                             }
                         } catch (err) {
                             console.error('Lead submit failed:', err);
